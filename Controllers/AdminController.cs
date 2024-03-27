@@ -16,14 +16,38 @@ namespace WealthTrackr.Controllers
             _context = context;
             _userManager = userManager;
         }
-       
+
         // Get 
-        //[HttpGet]
-        //public ActionResult ManageUser()
-        //{
-        //    List<ApplicationUser> accountUsers = _context.Users.ToList();
-        //    return View(accountUsers);
-        //}
+        public ActionResult ViewUsers()
+        {
+            //List<ApplicationUser> accountUsers = _context.Users.ToList();
+            //return View(accountUsers);
+            var users = _userManager.Users.ToList();
+            //List<ApplicationUser> CustomerList = [];
+            //List<ApplicationUser> AgentList = [];
+            //List<ApplicationUser> AdminList = [];
+            //foreach (var user in users)
+            //{
+            //    bool isInCustomerRole = await _userManager.IsInRoleAsync(user, "Customer");
+            //    bool isInAgentRole = await _userManager.IsInRoleAsync(user, "Agent");
+            //    if (isInCustomerRole)
+            //    {
+            //        CustomerList.Add(user);
+            //    }
+            //    else if (isInAgentRole)
+            //    {
+            //        AgentList.Add(user);
+            //    }
+            //    else
+            //    {
+            //        AdminList.Add(user);
+            //    }
+            //}
+            //ViewBag.CustomerList = CustomerList;
+            ViewBag.userList = users;
+            return View(users);
+
+        }
 
 
 
