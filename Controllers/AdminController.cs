@@ -45,7 +45,7 @@ namespace WealthTrackr.Controllers
             //}
             //ViewBag.CustomerList = CustomerList;
             ViewBag.userList = users;
-            return View(users);
+            return View();
 
         }
 

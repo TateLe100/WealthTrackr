@@ -10,22 +10,22 @@ using WealthTrackr.Models;
 
 namespace WealthTrackr.Controllers
 {
-    public class CategoriesController : Controller
+    public class TransactionsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CategoriesController(ApplicationDbContext context)
+        public TransactionsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Categories
+        // GET: Transactions
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Categories.ToListAsync());
+            return View(await _context.Transactions.ToListAsync());
         }
 
-        // GET: Categories/Details/5
+        // GET: Transactions/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +33,41 @@ namespace WealthTrackr.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.CategoryId == id);
-            if (category == null)
+            var transaction = await _context.Transactions
+                .FirstOrDefaultAsync(m => m.TransactionId == id);
+            if (transaction == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            return View(transaction);
         }
 
-        // GET: Categories/Create
+        // GET: Transactions/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Categories/Create
+        // POST: Transactions/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CategoryId,CategoryName, Type")] Category category)
+        public async Task<IActionResult> Create([Bind("TransactionId,FkAccountId,TransactionDate,TransactionType,Amount,Description")] Transaction transaction)
         {
+            // TODO: for the FkAccountId, I need to pass the currentUserId into that. 
+
             if (ModelState.IsValid)
             {
-                _context.Add(category);
+                _context.Add(transaction);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            return View(transaction);
         }
 
-        // GET: Categories/Edit/5
+        // GET: Transactions/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +75,22 @@ namespace WealthTrackr.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
+            var transaction = await _context.Transactions.FindAsync(id);
+            if (transaction == null)
             {
                 return NotFound();
             }
-            return View(category);
+            return View(transaction);
         }
 
-        // POST: Categories/Edit/5
+        // POST: Transactions/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CategoryId,CategoryName")] Category category)
+        public async Task<IActionResult> Edit(int id, [Bind("TransactionId,FkAccountId,TransactionDate,TransactionType,Amount,Description")] Transaction transaction)
         {
-            if (id != category.CategoryId)
+            if (id != transaction.TransactionId)
             {
                 return NotFound();
             }
@@ -97,12 +99,12 @@ namespace WealthTrackr.Controllers
             {
                 try
                 {
-                    _context.Update(category);
+                    _context.Update(transaction);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoryExists(category.CategoryId))
+                    if (!TransactionExists(transaction.TransactionId))
                     {
                         return NotFound();
                     }
@@ -113,10 +115,10 @@ namespace WealthTrackr.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(category);
+            return View(transaction);
         }
 
-        // GET: Categories/Delete/5
+        // GET: Transactions/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,34 +126,34 @@ namespace WealthTrackr.Controllers
                 return NotFound();
             }
 
-            var category = await _context.Categories
-                .FirstOrDefaultAsync(m => m.CategoryId == id);
-            if (category == null)
+            var transaction = await _context.Transactions
+                .FirstOrDefaultAsync(m => m.TransactionId == id);
+            if (transaction == null)
             {
                 return NotFound();
             }
 
-            return View(category);
+            return View(transaction);
         }
 
-        // POST: Categories/Delete/5
+        // POST: Transactions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
-            if (category != null)
+            var transaction = await _context.Transactions.FindAsync(id);
+            if (transaction != null)
             {
-                _context.Categories.Remove(category);
+                _context.Transactions.Remove(transaction);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CategoryExists(int id)
+        private bool TransactionExists(int id)
         {
-            return _context.Categories.Any(e => e.CategoryId == id);
+            return _context.Transactions.Any(e => e.TransactionId == id);
         }
     }
 }
