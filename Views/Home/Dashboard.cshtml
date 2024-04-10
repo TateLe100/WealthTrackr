@@ -14,7 +14,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Transactions</h5>
                     <p class="card-text">Create a new transaction</p>
-                    <a class="nav-link text-black" asp-area="" asp-page="/Transactions/Create">Create Transactions</a>
+                    <a class="nav-link text-black" asp-area="" asp-controller="Transactions" asp-action="Create">Create Transactions</a>
                 </div>
             </div>
         </div>
@@ -22,8 +22,8 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">Categories</h5>
-                    <p class="card-text">Create a new category!</p>
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Categories/Create">Create Category</a>
+                    <p class="card-text">Create a new category</p>
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Categories" asp-action="Create">Create Category</a>
                 </div>
             </div>
         </div>
@@ -32,7 +32,7 @@
                 <div class="card-body">
                     <h5 class="card-title">View all Transactions</h5>
                     <p class="card-text">View all your Transactions made!</p>
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Transactions/Index">All Transactions</a>
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Transactions" asp-action="Index">All Transactions</a>
                 </div>
             </div>
         </div>
@@ -41,7 +41,7 @@
                 <div class="card-body">
                     <h5 class="card-title">View all Categories</h5>
                     <p class="card-text">View all your Categories made!</p>
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Categories/Index">All Categories</a>
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Categories" asp-action="Index">All Categories</a>
                 </div>
             </div>
         </div>
@@ -50,7 +50,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Account</h5>
                     <p class="card-text">View your financial account!</p>
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Home/Dashboard">Financial Account</a>
+                    <a class="nav-link text-dark" asp-area="" asp-controller="FinancialAccounts" asp-action="Create">Financial Account</a>
                 </div>
             </div>
         </div>
@@ -58,8 +58,8 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title">View Users</h5>
-                    <p class="card-text">View User Info.</p>
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Admin/ViewUsers">Click to view all Users</a>
+                    <p class="card-text">View User Info</p>
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="ViewUsers">Click to view all Users</a>
                 </div>
             </div>
         </div>
