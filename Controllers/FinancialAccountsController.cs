@@ -188,20 +188,20 @@ namespace WealthTrackr.Controllers
         }
 
 
-        public async IActionResult MyAccountAsync()
-        {
-            // pass in current userID 
+        //public async IActionResult MyAccountAsync()
+        //{
+        //    // pass in current userID 
             
-            var financeAccounts = _context.FinancialAccounts.ToList();
-            foreach (var financeAccount in financeAccounts)
-            {
-                if (currentUser.Id == financeAccount.FkUserId)
-                {
-                    return Details(financeAccount.FinancialAccountId);
-                }
+        //    var financeAccounts = _context.FinancialAccounts.ToList();
+        //    foreach (var financeAccount in financeAccounts)
+        //    {
+        //        if (currentUser.Id == financeAccount.FkUserId)
+        //        {
+        //            return Details(financeAccount.FinancialAccountId);
+        //        }
                 
-            }
-            return RedirectToAction("Dashboard", "Home");
-        }
+        //    }
+        //    return RedirectToAction("Dashboard", "Home");
+        //}
     }
 }

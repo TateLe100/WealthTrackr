@@ -2,21 +2,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using WealthTrackr.Areas.Data;
 using WealthTrackr.Data;
 using WealthTrackr.Models;
+using WealthTrackr.ViewModels;
 
 namespace WealthTrackr.Controllers
 {
     public class TransactionsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public TransactionsController(ApplicationDbContext context)
+        public TransactionsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Transactions
@@ -44,27 +50,55 @@ namespace WealthTrackr.Controllers
         }
 
         // GET: Transactions/Create
+        [Authorize]
         public IActionResult Create()
         {
+            var categoriesList = _context.Categories.ToList();
+            List<string> categoryName = [];
+            foreach (var name in categoriesList)
+            {
+                categoryName.Add(name.CategoryName);
+            }
+            ViewBag.Categories = categoryName;
             return View();
         }
 
         // POST: Transactions/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TransactionId,FkAccountId,TransactionDate,TransactionType,Amount,Description")] Transaction transaction)
+        public async Task<IActionResult> Create(TransactionModel transaction)
         {
             // TODO: for the FkAccountId, I need to pass the currentUserId into that. 
-
+            
             if (ModelState.IsValid)
             {
-                _context.Add(transaction);
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser == null)
+                {
+                    return NotFound();
+                }
+                Transaction newTransaction = new Transaction
+                {
+                    TransactionId = transaction.TransactionId,
+                    TransactionDate = transaction.TransactionDate,
+                    FkAccountId = currentUser.Id,
+                    Amount = transaction.Amount,
+                    TransactionType = transaction.TransactionType,
+                    Description = transaction.Description,
+                };
+                _context.Transactions.Add(newTransaction);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(transaction);
+            else
+            {
+                ViewBag.Error = "Error, please try again later.";
+                return View(transaction);
+            }
+            
         }
 
         // GET: Transactions/Edit/5

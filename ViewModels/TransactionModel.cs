@@ -7,7 +7,6 @@ namespace WealthTrackr.ViewModels
     {
         
         public int TransactionId { get; set; }
-        public int FkAccountId { get; set; }
         public DateTime TransactionDate { get; set; } = DateTime.Now;
 
         [Required(ErrorMessage = "The Transaction Type field is required.")]
@@ -16,6 +15,5 @@ namespace WealthTrackr.ViewModels
         [Required(ErrorMessage = "The Amount field is required.")]
         public double Amount { get; set; }
         public string? Description { get; set; }
-        public Category Category { get; set; }
     }
 }
