@@ -13,11 +13,11 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="TransactionId" />
-            <div class="form-group">
+            @* <div class="form-group">
                 <label asp-for="FkAccountId" class="control-label"></label>
                 <input asp-for="FkAccountId" class="form-control" />
                 <span asp-validation-for="FkAccountId" class="text-danger"></span>
-            </div>
+            </div> *@
             <div class="form-group">
                 <label asp-for="TransactionDate" class="control-label"></label>
                 <input asp-for="TransactionDate" class="form-control" />

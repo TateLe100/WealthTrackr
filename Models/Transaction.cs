@@ -11,6 +11,5 @@ namespace WealthTrackr.Models
         public string TransactionType { get; set; }
         public double Amount { get; set; }
         public string Description { get; set; }
-        //public Category Category { get; set; }
     }
 }
