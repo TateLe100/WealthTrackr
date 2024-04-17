@@ -91,7 +91,7 @@ namespace WealthTrackr.Controllers
                 };
                 _context.Transactions.Add(newTransaction);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(RecentTransaction));
             }
             else
             {

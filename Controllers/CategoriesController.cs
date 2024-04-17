@@ -2,21 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using WealthTrackr.Areas.Data;
 using WealthTrackr.Data;
 using WealthTrackr.Models;
+using WealthTrackr.ViewModels;
 
 namespace WealthTrackr.Controllers
 {
     public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public CategoriesController(ApplicationDbContext context)
+        public CategoriesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Categories
@@ -54,15 +59,29 @@ namespace WealthTrackr.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CategoryId,CategoryName, Type")] Category category)
+        public async Task<IActionResult> Create(CategoryModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(category);
+                // current user 
+                var currentUser = await _userManager.GetUserAsync(User);
+                Category newCategory = new Category
+                {
+                    CategoryId = model.CategoryId,
+                    CategoryName = model.CategoryName,
+                    Type = model.Type,
+                    FkAccountId = currentUser.Id
+                };
+
+                _context.Add(newCategory);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MyCategories));
             }
-            return View(category);
+            else
+            {
+                ViewBag.Error = "Error, please try again later.";
+                return View();
+            }
         }
 
         // GET: Categories/Edit/5
@@ -86,7 +105,7 @@ namespace WealthTrackr.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CategoryId,CategoryName")] Category category)
+        public async Task<IActionResult> Edit(int id, CategoryModel category)
         {
             if (id != category.CategoryId)
             {
@@ -97,7 +116,16 @@ namespace WealthTrackr.Controllers
             {
                 try
                 {
-                    _context.Update(category);
+                    var currentUser = await _userManager.GetUserAsync(User);
+                    Category editCategory = new Category
+                    { 
+                        CategoryId = category.CategoryId,
+                        CategoryName = category.CategoryName,
+                        Type = category.Type,
+                        FkAccountId = currentUser.Id
+                    };
+
+                    _context.Update(editCategory);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -111,7 +139,7 @@ namespace WealthTrackr.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MyCategories));
             }
             return View(category);
         }
@@ -153,5 +181,31 @@ namespace WealthTrackr.Controllers
         {
             return _context.Categories.Any(e => e.CategoryId == id);
         }
+
+        // categories specific to user 
+        public async Task<IActionResult> MyCategories()
+        {
+            // current user 
+            var currentUser = await _userManager.GetUserAsync(User);
+            // list of all transactions 
+            var categories = await _context.Categories.ToListAsync();
+            // list of transactions specific to user 
+
+            List<Category> categoriesByUser = [];
+
+            // iterate through list of all transactions 
+            foreach (var category in categories)
+            {
+                if (currentUser.Id == category.FkAccountId)
+                {
+                    categoriesByUser.Add(category);
+                }
+            }
+
+
+
+            return View(categoriesByUser);
+        }
+
     }
 }
