@@ -1,0 +1,42 @@
+﻿@model List<Transaction>
+@{
+    ViewData["Title"] = "Recent Transaction";
+}
+
+<h1>Recent Transaction</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Transaction Date
+            </th>
+            <th>
+                Category 
+            </th>
+            <th>
+                Amount
+            </th>
+            <th>
+                Description
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TransactionDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TransactionType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Amount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

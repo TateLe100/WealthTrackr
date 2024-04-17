@@ -189,5 +189,30 @@ namespace WealthTrackr.Controllers
         {
             return _context.Transactions.Any(e => e.TransactionId == id);
         }
+
+        // RECENT TRANSACTION 
+        public async Task<IActionResult> RecentTransaction()
+        {
+            // current user 
+            var currentUser = await _userManager.GetUserAsync(User);
+            // list of all transactions 
+            var transactions = await _context.Transactions.ToListAsync();
+            // list of transactions specific to user 
+
+            List<Transaction> transactionsByUser = [];
+
+            // iterate through list of all transactions 
+            foreach (var transaction in transactions)
+            {
+                if(currentUser.Id == transaction.FkAccountId)
+                {
+                    transactionsByUser.Add(transaction);
+                }
+            }
+
+            
+
+            return View(transactionsByUser);
+        }
     }
 }
