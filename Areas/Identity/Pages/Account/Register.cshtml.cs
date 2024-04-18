@@ -30,13 +30,15 @@ namespace WealthTrackr.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -44,6 +46,7 @@ namespace WealthTrackr.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _roleManager = roleManager;
         }
 
         /// <summary>
@@ -108,6 +111,9 @@ namespace WealthTrackr.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+            [Phone]
+            [Display(Name = "Phone number")]
+            public string PhoneNumber { get; set; }
         }
 
 
@@ -128,11 +134,27 @@ namespace WealthTrackr.Areas.Identity.Pages.Account
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
                 user.RealPassword = Input.Password;
+                user.PhoneNumber = Input.PhoneNumber;
 
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
+
+                // IDentity Role 
+                bool x;
+                x = await _roleManager.RoleExistsAsync("Customer");
+                if (!x)
+                {
+                    var role = new IdentityRole();
+                    role.Name = "Customer";
+                    await _roleManager.CreateAsync(role);
+                    var identityResult = await _userManager.AddToRoleAsync(user, "Customer");
+                }
+                else
+                {
+                    var identityResult = await _userManager.AddToRoleAsync(user, "Customer");
+                }
 
                 if (result.Succeeded)
                 {

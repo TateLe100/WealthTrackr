@@ -135,6 +135,7 @@ namespace WealthTrackr.Controllers
                         return NotFound();
                     }
                     else
+
                     {
                         throw;
                     }

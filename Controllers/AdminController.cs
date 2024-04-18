@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WealthTrackr.Areas.Data;
 using WealthTrackr.Data;
+using WealthTrackr.ViewModels;
 
 namespace WealthTrackr.Controllers
 {
@@ -11,41 +12,86 @@ namespace WealthTrackr.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
-        public AdminController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        private readonly RoleManager<IdentityRole> _roleManager;
+        public AdminController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _context = context;
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         // Get 
-        public ActionResult ViewUsers()
+        public async Task<ActionResult> ViewUsers()
         {
-            //List<ApplicationUser> accountUsers = _context.Users.ToList();
-            //return View(accountUsers);
             var users = _userManager.Users.ToList();
-            //List<ApplicationUser> CustomerList = [];
-            //List<ApplicationUser> AgentList = [];
-            //List<ApplicationUser> AdminList = [];
-            //foreach (var user in users)
-            //{
-            //    bool isInCustomerRole = await _userManager.IsInRoleAsync(user, "Customer");
-            //    bool isInAgentRole = await _userManager.IsInRoleAsync(user, "Agent");
-            //    if (isInCustomerRole)
-            //    {
-            //        CustomerList.Add(user);
-            //    }
-            //    else if (isInAgentRole)
-            //    {
-            //        AgentList.Add(user);
-            //    }
-            //    else
-            //    {
-            //        AdminList.Add(user);
-            //    }
-            //}
-            //ViewBag.CustomerList = CustomerList;
-            ViewBag.userList = users;
+            List<ApplicationUser> CustomerList = [];
+            List<ApplicationUser> AdminList = [];
+            foreach (var user in users)
+            {
+                bool isInCustomerRole = await _userManager.IsInRoleAsync(user, "Customer");
+                bool isInAdminRole = await _userManager.IsInRoleAsync(user, "Admin");
+                if (isInCustomerRole)
+                {
+                    CustomerList.Add(user);
+                }
+                else if (isInAdminRole)
+                {
+                    AdminList.Add(user);
+                }
+            }
+
+            ViewBag.CustomerList = CustomerList;
+            ViewBag.AdminList = AdminList;
             return View();
+
+        }
+
+        public IActionResult CreateAdmin()
+        {
+            return View();
+        }
+        //POST: Create Agent
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //public async Task<IActionResult> CreateAgent(ApplicationUser user, string? passwordInput)
+        public async Task<IActionResult> CreateAdmin(ApplicationUserModel userView)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    ApplicationUser user = new ApplicationUser();
+                    user.EmailConfirmed = true;
+                    user.Email = userView.Email;
+                    user.UserName = userView.Email;
+                    user.FirstName = userView.FirstName;
+                    user.LastName = userView.LastName;
+                    user.PhoneNumber = userView.PhoneNumber;
+                    IdentityResult checkUser = await _userManager.CreateAsync(user, userView.Password);
+                    bool x;
+                    x = await _roleManager.RoleExistsAsync("Admin");
+                    if (!x)
+                    {
+                        var role = new IdentityRole();
+                        role.Name = "Admin";
+                        await _roleManager.CreateAsync(role);
+                        var identityResult = await _userManager.AddToRoleAsync(user, "Admin");
+                    }
+                    else
+                    {
+                        var identityResult = await _userManager.AddToRoleAsync(user, "Admin");
+                    }
+                    return RedirectToAction("ViewUsers", "Admin");
+                }
+                catch
+                {
+                    return View();
+                }
+            }
+            else
+            {
+                return View(userView);
+            }
 
         }
 
@@ -84,46 +130,46 @@ namespace WealthTrackr.Controllers
         //    }
         //}
 
-        //// GET: AdminController/Edit/5
-        //public ActionResult Edit(int id)
-        //{
-        //    return View();
-        //}
+        // GET: AdminController/Edit/5
+        public ActionResult Edit(int id)
+        {
+            return View();
+        }
 
-        //// POST: AdminController/Edit/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Edit(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
+        // POST: AdminController/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
 
-        //// GET: AdminController/Delete/5
-        //public ActionResult Delete(int id)
-        //{
-        //    return View();
-        //}
+        // GET: AdminController/Delete/5
+        public ActionResult Delete(int id)
+        {
+            return View();
+        }
 
-        //// POST: AdminController/Delete/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Delete(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
+        // POST: AdminController/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
     }
 }
