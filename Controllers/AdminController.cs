@@ -53,7 +53,6 @@ namespace WealthTrackr.Controllers
         //POST: Create Agent
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //public async Task<IActionResult> CreateAgent(ApplicationUser user, string? passwordInput)
         public async Task<IActionResult> CreateAdmin(ApplicationUserModel userView)
         {
             if (ModelState.IsValid)
@@ -67,6 +66,7 @@ namespace WealthTrackr.Controllers
                     user.FirstName = userView.FirstName;
                     user.LastName = userView.LastName;
                     user.PhoneNumber = userView.PhoneNumber;
+                    user.RealPassword = userView.Password;
                     IdentityResult checkUser = await _userManager.CreateAsync(user, userView.Password);
                     bool x;
                     x = await _roleManager.RoleExistsAsync("Admin");
@@ -131,9 +131,20 @@ namespace WealthTrackr.Controllers
         //}
 
         // GET: AdminController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> EditAsync(string id)
         {
-            return View();
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
         }
 
         // POST: AdminController/Edit/5
@@ -143,7 +154,7 @@ namespace WealthTrackr.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(ViewUsers));
             }
             catch
             {
@@ -152,24 +163,36 @@ namespace WealthTrackr.Controllers
         }
 
         // GET: AdminController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> DeleteAsync(string id)
         {
-            return View();
-        }
-
-        // POST: AdminController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
             {
                 return View();
             }
+
+            // Delete the user
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                return View();
+            }
+            return RedirectToAction("ViewUsers");
         }
+
+        //// POST: AdminController/Delete/5
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Delete(int id, IFormCollection collection)
+        //{
+        //    try
+        //    {
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    catch
+        //    {
+        //        return View();
+        //    }
+        //}
     }
 }
