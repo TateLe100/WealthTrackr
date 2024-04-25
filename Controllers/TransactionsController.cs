@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using WealthTrackr.Areas.Data;
 using WealthTrackr.Data;
 using WealthTrackr.Models;
@@ -51,9 +53,15 @@ namespace WealthTrackr.Controllers
 
         // GET: Transactions/Create
         [Authorize]
-        public IActionResult Create()
+        public async Task<IActionResult> CreateAsync()
         {
-            var categoriesList = _context.Categories.ToList();
+            var currentUser = await _userManager.GetUserAsync(User);
+            var categoriesList = _context.Categories.Where(c => c.FkAccountId == currentUser.Id).ToList();
+            if (categoriesList.Count() == 0)
+            {
+                return RedirectToAction("Create", "Categories");
+            }
+
             List<string> categoryName = [];
             foreach (var name in categoriesList)
             {
@@ -62,17 +70,14 @@ namespace WealthTrackr.Controllers
             ViewBag.Categories = categoryName;
             return View();
         }
-
-        // POST: Transactions/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TransactionModel transaction)
         {
             // TODO: for the FkAccountId, I need to pass the currentUserId into that. 
-            
+
             if (ModelState.IsValid)
             {
                 var currentUser = await _userManager.GetUserAsync(User);
@@ -80,6 +85,8 @@ namespace WealthTrackr.Controllers
                 {
                     return NotFound();
                 }
+
+
                 Transaction newTransaction = new Transaction
                 {
                     TransactionId = transaction.TransactionId,
@@ -89,8 +96,19 @@ namespace WealthTrackr.Controllers
                     TransactionType = transaction.TransactionType,
                     Description = transaction.Description,
                 };
+
+
+                string type = transaction.TransactionType;
+                double transactionAmount = transaction.Amount;
+                string userID = currentUser.Id;
+
+                await ProcessTransactionAsync(transactionAmount, userID, type);
+
                 _context.Transactions.Add(newTransaction);
                 await _context.SaveChangesAsync();
+
+
+
                 return RedirectToAction(nameof(RecentTransaction));
             }
             else
@@ -98,7 +116,7 @@ namespace WealthTrackr.Controllers
                 ViewBag.Error = "Error, please try again later.";
                 return View(transaction);
             }
-            
+
         }
 
         // GET: Transactions/Edit/5
@@ -191,6 +209,7 @@ namespace WealthTrackr.Controllers
         }
 
         // RECENT TRANSACTION 
+        [Authorize]
         public async Task<IActionResult> RecentTransaction()
         {
             // current user 
@@ -204,15 +223,36 @@ namespace WealthTrackr.Controllers
             // iterate through list of all transactions 
             foreach (var transaction in transactions)
             {
-                if(currentUser.Id == transaction.FkAccountId)
+                if (currentUser.Id == transaction.FkAccountId)
                 {
                     transactionsByUser.Add(transaction);
                 }
             }
-
-            
-
             return View(transactionsByUser);
         }
+
+        public async Task ProcessTransactionAsync(double amount, string Id, string type)
+        {
+            // find finance account connected to logged in user 
+
+            var financialAccount = await _context.FinancialAccounts.FirstOrDefaultAsync(m => m.FkUserId == Id);
+            var transactionType = await _context.Categories.FirstOrDefaultAsync(x => x.CategoryName == type && x.FkAccountId == Id);
+            string plusORminus = transactionType.Type;
+            double total = financialAccount.Balance;
+            double newTotal = 0;
+            if (plusORminus == "Expense")
+            {
+                newTotal = total - amount;
+            }
+            else
+            {
+                newTotal = total + amount;
+            }
+
+            financialAccount.Balance = newTotal;
+            await _context.SaveChangesAsync();
+
+        }
+
     }
 }

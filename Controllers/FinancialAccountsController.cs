@@ -54,7 +54,8 @@ namespace WealthTrackr.Controllers
         {
             if (accountId == null)
             {
-                return NotFound();
+                var currentUser = await _userManager.GetUserAsync(User);
+                //accountId = currentUser.Id;
             }
 
             var financialAccount = await _context.FinancialAccounts.FirstOrDefaultAsync(m => m.FinancialAccountId == accountId);

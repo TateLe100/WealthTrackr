@@ -6,8 +6,35 @@
 
 <h1>Details</h1>
 
+<div class="row">
+    <div class="col-sm">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Income</h5>
+                <p class="card-text">$300</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Expense</h5>
+                <p class="card-text">$300</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Balance</h5>
+                <p class="card-text">$900</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div>
-    <h4>FinancialAccount</h4>
+    <h4>Financial Account</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -38,11 +65,9 @@
             @Html.DisplayNameFor(model => model.Balance)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Balance)
+            @String.Format("{0:C}", Model.Balance)
         </dd>
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.FinancialAccountId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+

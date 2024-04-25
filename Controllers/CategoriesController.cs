@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -48,15 +49,13 @@ namespace WealthTrackr.Controllers
             return View(category);
         }
 
-        // GET: Categories/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Categories/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CategoryModel model)
@@ -183,7 +182,7 @@ namespace WealthTrackr.Controllers
             return _context.Categories.Any(e => e.CategoryId == id);
         }
 
-        // categories specific to user 
+        [Authorize]
         public async Task<IActionResult> MyCategories()
         {
             // current user 
