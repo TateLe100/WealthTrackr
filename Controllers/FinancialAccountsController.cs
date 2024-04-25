@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using WealthTrackr.Areas.Data;
 using WealthTrackr.Data;
 using WealthTrackr.Models;
@@ -25,30 +27,46 @@ namespace WealthTrackr.Controllers
         }
 
         // GET: FinancialAccounts
-        // ONLY ADMINS CAN GET TO THIS INDEX() METHOD OF FINANCIAL ACCOUNTS 
+        [Authorize]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.FinancialAccounts.ToListAsync());
+            
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            //var financialAccount = _context.FinancialAccounts.Find(currentUser.Id);
+            var financialAccount = await _context.FinancialAccounts.FirstOrDefaultAsync(m => m.FkUserId == currentUser.Id);
+            if (financialAccount == null)
+            {
+                return RedirectToAction(nameof(Create));
+            }
+            else
+            {
+                var accountID = financialAccount.FinancialAccountId;
+                return RedirectToAction(nameof(Details), new { accountId = accountID });
+            }
+            
+
+
         }
 
-        // GET: FinancialAccounts/Details/5
-        public async Task<IActionResult> Details(int? id)
+        //GET: FinancialAccounts/Details/5
+        public async Task<IActionResult> Details(int? accountId)
         {
-            if (id == null)
+            if (accountId == null)
             {
                 return NotFound();
             }
 
-            var financialAccount = await _context.FinancialAccounts.FirstOrDefaultAsync(m => m.FinancialAccountId == id);
+            var financialAccount = await _context.FinancialAccounts.FirstOrDefaultAsync(m => m.FinancialAccountId == accountId);
             if (financialAccount == null)
             {
                 return NotFound();
             }
 
-            // collect list of users 
+            //collect list of users
             var users = _userManager.Users.ToList();
-            // iterate through users
-            foreach(var user in users)
+            //iterate through users
+            foreach (var user in users)
             {
                 // if financialAccountId = userId 
                 if (user.Id == financialAccount.FkUserId)
@@ -59,6 +77,9 @@ namespace WealthTrackr.Controllers
                     ViewBag.AccountEmail = user.Email;
                 }
             }
+
+            // TODO: Put recent transactions to front end, graph possibly, 2buttons FRONT END STUFF 
+
             return View(financialAccount);
         }
 
@@ -89,7 +110,7 @@ namespace WealthTrackr.Controllers
 
                 _context.Add(newAccount);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { accountId = model.FinancialAccountId });
             }
             else
             {
@@ -99,109 +120,109 @@ namespace WealthTrackr.Controllers
         }
 
         // GET: FinancialAccounts/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Edit(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var financialAccount = await _context.FinancialAccounts.FindAsync(id);
-            if (financialAccount == null)
-            {
-                return NotFound();
-            }
-            return View(financialAccount);
-        }
+        //    var financialAccount = await _context.FinancialAccounts.FindAsync(id);
+        //    if (financialAccount == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return View(financialAccount);
+        //}
 
-        // POST: FinancialAccounts/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FinancialAccountId,FkUserId,AccountName,Balance")] FinancialAccount financialAccount)
-        {
-            if (id != financialAccount.FinancialAccountId)
-            {
-                return NotFound();
-            }
+        //// POST: FinancialAccounts/Edit/5
+        //// To protect from overposting attacks, enable the specific properties you want to bind to.
+        //// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Edit(int id, [Bind("FinancialAccountId,FkUserId,AccountName,Balance")] FinancialAccount financialAccount)
+        //{
+        //    if (id != financialAccount.FinancialAccountId)
+        //    {
+        //        return NotFound();
+        //    }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(financialAccount);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FinancialAccountExists(financialAccount.FinancialAccountId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(financialAccount);
-        }
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            _context.Update(financialAccount);
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!FinancialAccountExists(financialAccount.FinancialAccountId))
+        //            {
+        //                return NotFound();
+        //            }
+        //            else
+        //            {
+        //                throw;
+        //            }
+        //        }
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    return View(financialAccount);
+        //}
 
-        // GET: FinancialAccounts/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //// GET: FinancialAccounts/Delete/5
+        //public async Task<IActionResult> Delete(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var financialAccount = await _context.FinancialAccounts
-                .FirstOrDefaultAsync(m => m.FinancialAccountId == id);
-            if (financialAccount == null)
-            {
-                return NotFound();
-            }
+        //    var financialAccount = await _context.FinancialAccounts
+        //        .FirstOrDefaultAsync(m => m.FinancialAccountId == id);
+        //    if (financialAccount == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(financialAccount);
-        }
+        //    return View(financialAccount);
+        //}
 
-        // POST: FinancialAccounts/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var financialAccount = await _context.FinancialAccounts.FindAsync(id);
-            if (financialAccount != null)
-            {
-                _context.FinancialAccounts.Remove(financialAccount);
-            }
+        //// POST: FinancialAccounts/Delete/5
+        //[HttpPost, ActionName("Delete")]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> DeleteConfirmed(int id)
+        //{
+        //    var financialAccount = await _context.FinancialAccounts.FindAsync(id);
+        //    if (financialAccount != null)
+        //    {
+        //        _context.FinancialAccounts.Remove(financialAccount);
+        //    }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+        //    await _context.SaveChangesAsync();
+        //    return RedirectToAction(nameof(Index));
+        //}
 
         private bool FinancialAccountExists(int id)
         {
             return _context.FinancialAccounts.Any(e => e.FinancialAccountId == id);
         }
 
-
-        //public async IActionResult MyAccountAsync()
+        //public async IActionResult MyAccount()
         //{
-        //    // pass in current userID 
-            
-        //    var financeAccounts = _context.FinancialAccounts.ToList();
-        //    foreach (var financeAccount in financeAccounts)
+        //    var currentUser = await _userManager.GetUserAsync(User);
+        //    if (currentUser == null)
         //    {
-        //        if (currentUser.Id == financeAccount.FkUserId)
-        //        {
-        //            return Details(financeAccount.FinancialAccountId);
-        //        }
-                
+        //        return RedirectToAction(nameof(Create));
         //    }
-        //    return RedirectToAction("Dashboard", "Home");
+        //    else
+        //    {
+        //        //var financialAccount = _context.FinancialAccounts.Find(currentUser.Id);
+        //        var financialAccount = await _context.FinancialAccounts.FirstOrDefaultAsync(m => m.FkUserId == currentUser.Id);
+        //        return Details(financialAccount);
+
+        //    }
         //}
+
     }
 }
