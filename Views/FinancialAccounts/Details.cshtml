@@ -4,9 +4,7 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
-
-<div class="row">
+<div class="row mb-5 mt-5">
     <div class="col-sm">
         <div class="card">
             <div class="card-body">
@@ -33,7 +31,54 @@
     </div>
 </div>
 
-<div>
+<div class="card text-center mb-2">
+    <div class="card-header">
+        WealthTrackr Account
+    </div>
+    <div class="card-body">
+        @* <h5 class="card-title">Special title treatment</h5> *@
+        <p class="card-text">
+            <dl class="row">
+                <dt class="col-sm-4">
+                    First Name
+                </dt>
+                <dd class="col-sm-8">
+                    @ViewBag.AccountFirstName
+                </dd>
+                <dt class="col-sm-4">
+                    Last Name
+                </dt>
+                <dd class="col-sm-8">
+                    @ViewBag.AccountLastName
+                </dd>
+                <dt class="col-sm-4">
+                    Email
+                </dt>
+                <dd class="col-sm-8">
+                    @ViewBag.AccountEmail
+                </dd>
+                <dt class="col-sm-4">
+                    Account Name
+                </dt>
+                <dd class="col-sm-8">
+                    @Html.DisplayFor(model => model.AccountName)
+                </dd>
+                <dt class="col-sm-4">
+                    @Html.DisplayNameFor(model => model.Balance)
+                </dt>
+                <dd class="col-sm-8">
+                    @String.Format("{0:C}", Model.Balance)
+                </dd>
+            </dl>
+        </p>
+        @* <a href="#" class="btn btn-primary">Edit</a> *@
+    </div>
+    @* <div class="card-footer text-muted">
+        2 days ago
+    </div> *@
+</div>
+
+@* <div>
     <h4>Financial Account</h4>
     <hr />
     <dl class="row">
@@ -68,6 +113,6 @@
             @String.Format("{0:C}", Model.Balance)
         </dd>
     </dl>
-</div>
+</div> *@
 
 
