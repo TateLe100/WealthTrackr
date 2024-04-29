@@ -72,12 +72,14 @@ namespace WealthTrackr.Controllers
                 // if financialAccountId = userId 
                 if (user.Id == financialAccount.FkUserId)
                 {
-                    // send first/last/email to front end with viewbag?
+                    
                     ViewBag.AccountFirstName = user.FirstName;
                     ViewBag.AccountLastName = user.LastName;
                     ViewBag.AccountEmail = user.Email;
                 }
             }
+
+
 
             // TODO: Put recent transactions to front end, graph possibly, 2buttons FRONT END STUFF 
 
