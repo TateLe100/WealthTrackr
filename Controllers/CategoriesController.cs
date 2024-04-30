@@ -174,7 +174,7 @@ namespace WealthTrackr.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(MyCategories));
         }
 
         private bool CategoryExists(int id)

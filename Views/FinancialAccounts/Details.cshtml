@@ -9,7 +9,7 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Total Income</h5>
-                <p class="card-text">$300</p>
+                <p class="card-text">@String.Format("{0:C}", ViewBag.TotalIncome)</p>
             </div>
         </div>
     </div>
@@ -17,15 +17,15 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Total Expense</h5>
-                <p class="card-text">$300</p>
+                <p class="card-text">@String.Format("{0:C}", ViewBag.TotalExpense)</p>
             </div>
         </div>
     </div>
     <div class="col-sm">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Balance</h5>
-                <p class="card-text">$900</p>
+                <h5 class="card-title">Current Balance</h5>
+                <p class="card-text">@String.Format("{0:C}", Model.Balance)</p>
             </div>
         </div>
     </div>

@@ -52,9 +52,11 @@ namespace WealthTrackr.Controllers
         //GET: FinancialAccounts/Details/5
         public async Task<IActionResult> Details(int? accountId)
         {
+            //string currentUserId;
             if (accountId == null)
             {
                 var currentUser = await _userManager.GetUserAsync(User);
+                //currentUserId = currentUser.Id;
                 //accountId = currentUser.Id;
             }
 
@@ -64,6 +66,41 @@ namespace WealthTrackr.Controllers
                 return NotFound();
             }
 
+
+            // list of categories 
+            var categories = await _context.Categories.Where(x => x.FkAccountId == financialAccount.FkUserId).ToListAsync();
+            // list of transactions 
+            var transactions = await _context.Transactions.Where(x => x.FkAccountId == financialAccount.FkUserId).ToListAsync();
+
+
+            // iterate through transaction 
+
+            double totalIncome = 0;
+            double totalExpense = 0;
+
+            foreach (var transaction in transactions)
+            {
+                foreach (var category in categories)
+                {
+                    if (transaction.TransactionType.Equals(category.CategoryName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (category.Type == "Expense")
+                        {
+                            totalExpense += transaction.Amount;
+                        }
+                        else if(category.Type == "Income")
+                        {
+                            totalIncome += transaction.Amount;
+                        }
+                        
+                    }
+                }
+            }
+
+
+
+
+
             //collect list of users
             var users = _userManager.Users.ToList();
             //iterate through users
@@ -72,7 +109,8 @@ namespace WealthTrackr.Controllers
                 // if financialAccountId = userId 
                 if (user.Id == financialAccount.FkUserId)
                 {
-                    
+                    ViewBag.TotalIncome = totalIncome;
+                    ViewBag.TotalExpense = totalExpense;
                     ViewBag.AccountFirstName = user.FirstName;
                     ViewBag.AccountLastName = user.LastName;
                     ViewBag.AccountEmail = user.Email;

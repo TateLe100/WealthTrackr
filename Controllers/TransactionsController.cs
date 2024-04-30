@@ -109,7 +109,7 @@ namespace WealthTrackr.Controllers
 
 
 
-                return RedirectToAction(nameof(RecentTransaction));
+                return RedirectToAction(nameof(MyTransactions));
             }
             else
             {
@@ -210,25 +210,20 @@ namespace WealthTrackr.Controllers
 
         // RECENT TRANSACTION 
         [Authorize]
-        public async Task<IActionResult> RecentTransaction()
+        public async Task<IActionResult> MyTransactions()
         {
-            // current user 
             var currentUser = await _userManager.GetUserAsync(User);
-            // list of all transactions 
-            var transactions = await _context.Transactions.ToListAsync();
-            // list of transactions specific to user 
 
-            List<Transaction> transactionsByUser = [];
+            var userTransactions = await _context.Transactions.Where(m => m.FkAccountId == currentUser.Id).ToListAsync();
 
-            // iterate through list of all transactions 
-            foreach (var transaction in transactions)
-            {
-                if (currentUser.Id == transaction.FkAccountId)
-                {
-                    transactionsByUser.Add(transaction);
-                }
-            }
-            return View(transactionsByUser);
+
+            //var recentUserTransactions = await _context.Transactions
+            //                                       .Where(t => t.FkAccountId == currentUser.Id)
+            //                                       .OrderByDescending(t => t.TransactionDate)
+            //                                       .Take(5)
+            //                                       .ToListAsync();
+            //return View(recentUserTransactions);
+            return View(userTransactions);
         }
 
         public async Task ProcessTransactionAsync(double amount, string Id, string type)
