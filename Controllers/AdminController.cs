@@ -68,18 +68,40 @@ namespace WealthTrackr.Controllers
                     user.PhoneNumber = userView.PhoneNumber;
                     user.RealPassword = userView.Password;
                     IdentityResult checkUser = await _userManager.CreateAsync(user, userView.Password);
-                    bool x;
-                    x = await _roleManager.RoleExistsAsync("Admin");
-                    if (!x)
+
+                    if (userView.role == 1)
                     {
-                        var role = new IdentityRole();
-                        role.Name = "Admin";
-                        await _roleManager.CreateAsync(role);
-                        var identityResult = await _userManager.AddToRoleAsync(user, "Admin");
+                        bool x;
+                        x = await _roleManager.RoleExistsAsync("Admin");
+                        if (!x)
+                        {
+                            var role = new IdentityRole();
+                            role.Name = "Admin";
+                            await _roleManager.CreateAsync(role);
+                            var identityResult = await _userManager.AddToRoleAsync(user, "Admin");
+                        }
+                        else
+                        {
+                            var identityResult = await _userManager.AddToRoleAsync(user, "Admin");
+                        }
+                        return RedirectToAction("ViewUsers", "Admin");
                     }
-                    else
+                    else if (userView.role == 2)
                     {
-                        var identityResult = await _userManager.AddToRoleAsync(user, "Admin");
+                        bool x;
+                        x = await _roleManager.RoleExistsAsync("Customer");
+                        if (!x)
+                        {
+                            var role = new IdentityRole();
+                            role.Name = "Customer";
+                            await _roleManager.CreateAsync(role);
+                            var identityResult = await _userManager.AddToRoleAsync(user, "Customer");
+                        }
+                        else
+                        {
+                            var identityResult = await _userManager.AddToRoleAsync(user, "Customer");
+                        }
+                        return RedirectToAction("ViewUsers", "Admin");
                     }
                     return RedirectToAction("ViewUsers", "Admin");
                 }
@@ -114,15 +136,27 @@ namespace WealthTrackr.Controllers
         // POST: AdminController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> EditAsync(IFormCollection collection)
         {
-            try
+            var selectedId = collection["Id"];
+            var newPassword = collection["newPassword"];
+
+            var user = await _userManager.FindByIdAsync(selectedId);
+            if (user == null)
             {
-                return RedirectToAction(nameof(ViewUsers));
+                return NotFound();
             }
-            catch
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+
+            if (result.Succeeded)
             {
-                return View();
+                return RedirectToAction("ViewUsers", "Admin");
+            }
+            else
+            {
+                return NotFound();
             }
         }
 
@@ -160,3 +194,5 @@ namespace WealthTrackr.Controllers
         //}
     }
 }
+
+

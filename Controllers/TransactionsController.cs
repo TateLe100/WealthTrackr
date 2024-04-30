@@ -1,4 +1,21 @@
-﻿using System;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Numerics;
+//using System.Threading.Tasks;
+//using AspNetCore;
+//using Microsoft.AspNetCore.Authorization;
+//using Microsoft.AspNetCore.Identity;
+//using Microsoft.AspNetCore.Mvc;
+//using Microsoft.AspNetCore.Mvc.Rendering;
+//using Microsoft.EntityFrameworkCore;
+//using Microsoft.Identity.Client;
+//using WealthTrackr.Areas.Data;
+//using WealthTrackr.Data;
+//using WealthTrackr.Models;
+//using WealthTrackr.ViewModels;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -13,6 +30,7 @@ using WealthTrackr.Areas.Data;
 using WealthTrackr.Data;
 using WealthTrackr.Models;
 using WealthTrackr.ViewModels;
+
 
 namespace WealthTrackr.Controllers
 {
@@ -57,10 +75,18 @@ namespace WealthTrackr.Controllers
         {
             var currentUser = await _userManager.GetUserAsync(User);
             var categoriesList = _context.Categories.Where(c => c.FkAccountId == currentUser.Id).ToList();
+
+            var financialAccount = _context.FinancialAccounts.Where(c => c.FkUserId == currentUser.Id).ToList();
+
+            if (financialAccount.Count() == 0)
+            {
+                return RedirectToAction("Create", "FinancialAccounts");
+            }
+
             if (categoriesList.Count() == 0)
             {
                 return RedirectToAction("Create", "Categories");
-            }
+            } 
 
             List<string> categoryName = [];
             foreach (var name in categoriesList)

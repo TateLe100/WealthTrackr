@@ -50,8 +50,15 @@ namespace WealthTrackr.Controllers
         }
 
         [Authorize]
-        public IActionResult Create()
+        public async Task<IActionResult> CreateAsync()
         {
+            var currentUser = await _userManager.GetUserAsync(User);
+            var financialAccount = _context.FinancialAccounts.Where(c => c.FkUserId == currentUser.Id).ToList();
+
+            if (financialAccount.Count() == 0)
+            {
+                return RedirectToAction("Create", "FinancialAccounts");
+            }
             return View();
         }
 
