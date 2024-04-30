@@ -35,6 +35,14 @@ namespace WealthTrackr.Controllers
 
         public IActionResult Dashboard()
         {
+            
+            // check if user has account -> send through viewBag 
+            //var recentUserTransactions = await _context.Transactions
+            //                                       .Where(t => t.FkAccountId == currentUser.Id)
+            //                                       .OrderByDescending(t => t.TransactionDate)
+            //                                       .Take(5)
+            //                                       .ToListAsync();
+            //return View(recentUserTransactions);
             return View();
         }
         public IActionResult Privacy()

@@ -178,20 +178,22 @@ namespace WealthTrackr.Controllers
             return RedirectToAction("ViewUsers");
         }
 
-        //// POST: AdminController/Delete/5
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Delete(int id, IFormCollection collection)
-        //{
-        //    try
-        //    {
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    catch
-        //    {
-        //        return View();
-        //    }
-        //}
+        public async Task<IActionResult> ViewCustomerAccountsAsync()
+        {
+            var users = _userManager.Users.ToList();
+            List<ApplicationUser> CustomerList = [];
+            foreach (var user in users)
+            {
+                bool isInCustomerRole = await _userManager.IsInRoleAsync(user, "Customer");
+                if (isInCustomerRole)
+                {
+                    CustomerList.Add(user);
+                }
+            }
+
+            ViewBag.CustomerList = CustomerList;
+            return View();
+        }
     }
 }
 
