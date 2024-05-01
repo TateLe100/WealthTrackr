@@ -12,6 +12,14 @@
             <div class="card-body">
                 <form asp-action="CreateAdmin">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row mt-2 col-8 mx-auto mb-3">
+                        <div class="btn-group" role="group">
+                            <input class="btn-check" type="radio" id="type1" asp-for="role" value="1">
+                            <label class="btn btn-secondary" for="type1">Admin</label>
+                            <input class="btn-check" type="radio" id="type2" asp-for="role" value="2">
+                            <label class="btn btn-secondary" for="type2">Customer</label>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-6">
                             <div class="form-floating mb-3">
@@ -49,17 +57,10 @@
                         <label asp-for="ConfirmPassword">Confirm Password</label>
                         <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                     </div>
-                    <div class="row mt-2 col-8 mx-auto mb-3">
-                        <div class="btn-group" role="group">
-                            <input class="btn-check" type="radio" id="type1" asp-for="role" value="1">
-                            <label class="btn btn-secondary" for="type1">Admin</label>
-                            <input class="btn-check" type="radio" id="type2" asp-for="role" value="2">
-                            <label class="btn btn-secondary" for="type2">Customer</label>
-                        </div>
-
-                    </div>
+                    
                     <div class="form-group">
-                        <input type="submit" value="Register" class="btn btn-primary" />
+                        <input type="submit" value="Create" class="btn btn-primary btn-sm" />
+                        <a class="btn btn-sm btn-secondary" asp-area="" asp-controller="Admin" asp-action="ViewUsers">Back to Users</a>
                     </div>
                 </form>
             </div>

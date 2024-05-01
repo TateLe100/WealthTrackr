@@ -11,7 +11,7 @@
     <div class="row mt-4">
         @if (User.IsInRole("Customer"))
         {
-            <div class="col">
+            @* <div class="col">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Transactions</h5>
@@ -19,31 +19,50 @@
                         <a class="nav-link text-black" asp-area="" asp-controller="Transactions" asp-action="Create">Create Transactions</a>
                     </div>
                 </div>
-            </div>
+            </div> *@
             <div class="col">
-                <div class="card">
+                <div class="card text-center">
+                    <div class="card-header">
+                        <h5>Transactions</h5>
+                    </div>
                     <div class="card-body">
-                        <h5 class="card-title">View all Transactions</h5>
-                        <p class="card-text">View all your Transactions made!</p>
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Transactions" asp-action="MyTransactions">My Transactions</a>
+                        <p class="card-text">Create a new transaction</p>
+                        <a class="btn btn-sm btn-secondary" asp-area="" asp-controller="Transactions" asp-action="Create">Create Transactions</a>
                     </div>
                 </div>
             </div>
             <div class="col">
-                <div class="card">
+                <div class="card text-center">
+                    <div class="card-header">
+                        <h5>View All Transactions</h5>
+                    </div>
                     <div class="card-body">
-                        <h5 class="card-title">View all Categories</h5>
-                        <p class="card-text">View all your Categories made!</p>
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Categories" asp-action="MyCategories">My Categories</a>
+                        <p class="card-text">View all your Transactions made</p>
+                        <a class="btn btn-sm btn-secondary" asp-area="" asp-controller="Transactions" asp-action="MyTransactions">My Transactions</a>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col">
+                <div class="card text-center">
+                    <div class="card-header">
+                        <h5>View All Categories</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">View all your Categories made</p>
+                        <a class="btn btn-sm btn-secondary" asp-area="" asp-controller="Categories" asp-action="MyCategories">My Categories</a>
                     </div>
                 </div>
             </div>
             <div class="col">
-                <div class="card">
+                <div class="card text-center">
+                    <div class="card-header">
+                        <h5>Account</h5>
+                    </div>
                     <div class="card-body">
-                        <h5 class="card-title">Account</h5>
                         <p class="card-text">View your financial account!</p>
-                        <a class="nav-link text-dark" asp-area="" asp-controller="FinancialAccounts" asp-action="Index">Financial Account</a>
+                        <a class="btn btn-sm btn-secondary" asp-area="" asp-controller="FinancialAccounts" asp-action="Index">Financial Account</a>
                     </div>
                 </div>
             </div>
@@ -53,20 +72,24 @@
         @if (User.IsInRole("Admin"))
         {
             <div class="col">
-                <div class="card">
+                <div class="card text-center">
+                    <div class="card-header">
+                        <h5>WealthTrackr Accounts</h5>
+                    </div>
                     <div class="card-body">
-                        <h5 class="card-title">View Accounts</h5>
                         <p class="card-text">Account User Info</p>
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="ViewCustomerAccounts">Customer Account Info</a>
+                        <a class="btn btn-sm btn-secondary" asp-area="" asp-controller="Admin" asp-action="ViewCustomerAccounts">WealthTrackr Account Info</a>
                     </div>
                 </div>
             </div>
             <div class="col">
-                <div class="card">
+                <div class="card text-center">
+                    <div class="card-header">
+                        <h5>User Accounts</h5>
+                    </div>
                     <div class="card-body">
-                        <h5 class="card-title">View Users</h5>
                         <p class="card-text">View User Info</p>
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="ViewUsers">View all Users</a>
+                        <a class="btn btn-sm btn-secondary" asp-area="" asp-controller="Admin" asp-action="ViewUsers">Users Account Info</a>
                     </div>
                 </div>
             </div>

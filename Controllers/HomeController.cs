@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using WealthTrackr.Areas.Data;
+using WealthTrackr.Data;
 using WealthTrackr.Models;
 
 namespace WealthTrackr.Controllers
@@ -9,13 +11,15 @@ namespace WealthTrackr.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
 
-        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager)
+        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, ApplicationDbContext context)
         {
             _logger = logger;
             _userManager = userManager;
+            _context = context;
         }
 
         public async Task<IActionResult> IndexAsync()
@@ -30,19 +34,12 @@ namespace WealthTrackr.Controllers
             {
                 ViewBag.CurrentUser = "";
             }
+
             return View();
         }
 
         public IActionResult Dashboard()
         {
-            
-            // check if user has account -> send through viewBag 
-            //var recentUserTransactions = await _context.Transactions
-            //                                       .Where(t => t.FkAccountId == currentUser.Id)
-            //                                       .OrderByDescending(t => t.TransactionDate)
-            //                                       .Take(5)
-            //                                       .ToListAsync();
-            //return View(recentUserTransactions);
             return View();
         }
         public IActionResult Privacy()

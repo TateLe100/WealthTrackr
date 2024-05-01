@@ -52,18 +52,11 @@ namespace WealthTrackr.Controllers
         //GET: FinancialAccounts/Details/5
         public async Task<IActionResult> Details(int? accountId)
         {
-            //string currentUserId;
-            if (accountId == null)
-            {
-                var currentUser = await _userManager.GetUserAsync(User);
-                //currentUserId = currentUser.Id;
-                //accountId = currentUser.Id;
-            }
-
+            var currentUser = await _userManager.GetUserAsync(User);
             var financialAccount = await _context.FinancialAccounts.FirstOrDefaultAsync(m => m.FinancialAccountId == accountId);
             if (financialAccount == null)
             {
-                return NotFound();
+                return RedirectToAction("Dashboard", "Home");
             }
 
 
@@ -97,9 +90,14 @@ namespace WealthTrackr.Controllers
                 }
             }
 
+            var recentUserTransactions = await _context.Transactions
+                                                   .Where(t => t.FkAccountId == currentUser.Id)
+                                                   .OrderByDescending(t => t.TransactionDate)
+                                                   .Take(5)
+                                                   .ToListAsync();
 
 
-
+            
 
             //collect list of users
             var users = _userManager.Users.ToList();
@@ -109,6 +107,7 @@ namespace WealthTrackr.Controllers
                 // if financialAccountId = userId 
                 if (user.Id == financialAccount.FkUserId)
                 {
+                    ViewBag.RecentTransactions = recentUserTransactions;
                     ViewBag.TotalIncome = totalIncome;
                     ViewBag.TotalExpense = totalExpense;
                     ViewBag.AccountFirstName = user.FirstName;
@@ -116,6 +115,7 @@ namespace WealthTrackr.Controllers
                     ViewBag.AccountEmail = user.Email;
                 }
             }
+
 
 
 

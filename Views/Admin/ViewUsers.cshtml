@@ -31,7 +31,8 @@
                 }
             </tbody>
         </table>
-        <a class="btn btn-primary m-3" asp-area="" asp-controller="Admin" asp-action="CreateAdmin">Create User</a>
+        <a class="btn btn-primary m-2 btn-sm" asp-area="" asp-controller="Admin" asp-action="CreateAdmin">Create User</a>
+        <a class="btn btn-sm btn-secondary" asp-area="" asp-controller="Home" asp-action="Dashboard">Back to Dashboard</a>
     </div>
 </div>
 
@@ -48,7 +49,6 @@
                     <th scope="col">First Name</th>
                     <th scope="col">Last Name</th>
                     <th scope="col">Password</th>
-                    @* <th scope="col">Manage</th> *@
                 </tr>
             </thead>
             <tbody>
@@ -60,10 +60,6 @@
                         <td>@Admin.FirstName</td>
                         <td>@Admin.LastName</td>
                         <td>@Admin.RealPassword</td>
-                        @* <td>
-                    <a class="btn btn-primary btn-sm" asp-area="" asp-controller="Admin" asp-action="Edit" asp-route-id="@Admin.Id">Edit</a> |
-                    <a class="btn btn-danger btn-sm" asp-area="" asp-controller="Admin" asp-action="Delete" asp-route-id="@Admin.Id" onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
-                    </td> *@
                     </tr>
                 }
             </tbody>

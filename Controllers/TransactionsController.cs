@@ -101,8 +101,7 @@ namespace WealthTrackr.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TransactionModel transaction)
-        {
-            // TODO: for the FkAccountId, I need to pass the currentUserId into that. 
+        { 
 
             if (ModelState.IsValid)
             {

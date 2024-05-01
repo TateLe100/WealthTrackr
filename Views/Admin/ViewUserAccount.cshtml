@@ -1,0 +1,57 @@
+﻿@model WealthTrackr.Models.FinancialAccount
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="card border-0 rounded-lg shadow mb-4">
+    <div class="card-header text-center mb-4">
+        <h5>WealthTrackr Account Info</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row mb-3">
+                    <div class="col-sm-5">
+                        <strong>First Name:</strong>
+                    </div>
+                    <div class="col-sm-7">
+                        <span>@ViewBag.SelectedAccount.FirstName</span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-5">
+                        <strong>Last Name:</strong>
+                    </div>
+                    <div class="col-sm-7">
+                        <span>@ViewBag.SelectedAccount.LastName</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row mb-3">
+                    <div class="col-sm-5">
+                        <strong>Account Name:</strong>
+                    </div>
+                    <div class="col-sm-7">
+                        <span>@Html.DisplayFor(model => model.AccountName)</span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-5">
+                        <strong>Balance:</strong>
+                    </div>
+                    <div class="col-sm-7">
+                        <span>@String.Format("{0:C}", Model.Balance)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center mt-3">
+                <a class="btn btn-sm btn-secondary" asp-area="" asp-controller="Admin" asp-action="ViewCustomerAccounts">Back to Accounts</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+

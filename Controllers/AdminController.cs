@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WealthTrackr.Areas.Data;
 using WealthTrackr.Data;
+using WealthTrackr.Models;
 using WealthTrackr.ViewModels;
 
 namespace WealthTrackr.Controllers
@@ -190,8 +191,44 @@ namespace WealthTrackr.Controllers
                     CustomerList.Add(user);
                 }
             }
-
             ViewBag.CustomerList = CustomerList;
+            return View();
+        }
+        public async Task<IActionResult> ViewUserCategories(string id)
+        {
+            var categories = await _context.Categories.Where(c => c.FkAccountId == id).ToListAsync();
+
+            var user = await _userManager.FindByIdAsync(id);
+
+            ViewBag.SelectedUser = user;
+
+            return View(categories);
+        }
+        public async Task<IActionResult> ViewUserTransactions(string id)
+        {
+            var categories = await _context.Transactions.Where(c => c.FkAccountId == id).ToListAsync();
+
+            var user = await _userManager.FindByIdAsync(id);
+
+            ViewBag.SelectedUser = user;
+
+            return View(categories);
+        }
+        public async Task<IActionResult> ViewUserAccount(string id)
+        {
+            //var categories = await _context.Categories.Where(c => c.FkAccountId == id).ToListAsync();
+
+            var account = await _context.FinancialAccounts.FirstOrDefaultAsync(c => c.FkUserId == id);
+            if (account == null)
+            {
+                return RedirectToAction("NoUserAccount");
+            }
+            var accountInfo = await _userManager.Users.FirstOrDefaultAsync(t => t.Id == id);
+            ViewBag.SelectedAccount = accountInfo;
+            return View(account);
+        }
+        public IActionResult NoUserAccount()
+        {
             return View();
         }
     }
