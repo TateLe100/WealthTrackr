@@ -1,21 +1,4 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Numerics;
-//using System.Threading.Tasks;
-//using AspNetCore;
-//using Microsoft.AspNetCore.Authorization;
-//using Microsoft.AspNetCore.Identity;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.AspNetCore.Mvc.Rendering;
-//using Microsoft.EntityFrameworkCore;
-//using Microsoft.Identity.Client;
-//using WealthTrackr.Areas.Data;
-//using WealthTrackr.Data;
-//using WealthTrackr.Models;
-//using WealthTrackr.ViewModels;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -241,19 +224,11 @@ namespace WealthTrackr.Controllers
 
             var userTransactions = await _context.Transactions.Where(m => m.FkAccountId == currentUser.Id).ToListAsync();
 
-
-            //var recentUserTransactions = await _context.Transactions
-            //                                       .Where(t => t.FkAccountId == currentUser.Id)
-            //                                       .OrderByDescending(t => t.TransactionDate)
-            //                                       .Take(5)
-            //                                       .ToListAsync();
-            //return View(recentUserTransactions);
             return View(userTransactions);
         }
 
         public async Task ProcessTransactionAsync(double amount, string Id, string type)
         {
-            // find finance account connected to logged in user 
 
             var financialAccount = await _context.FinancialAccounts.FirstOrDefaultAsync(m => m.FkUserId == Id);
             var transactionType = await _context.Categories.FirstOrDefaultAsync(x => x.CategoryName == type && x.FkAccountId == Id);
