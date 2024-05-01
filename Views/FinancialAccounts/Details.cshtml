@@ -1,0 +1,120 @@
+﻿@model WealthTrackr.Models.FinancialAccount
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="row mb-5 mt-5">
+    <div class="col-sm">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Income</h5>
+                <p class="card-text">@String.Format("{0:C}", ViewBag.TotalIncome)</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Expense</h5>
+                <p class="card-text">@String.Format("{0:C}", ViewBag.TotalExpense)</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Current Balance</h5>
+                <p class="card-text">@String.Format("{0:C}", Model.Balance)</p>
+            </div>
+        </div>
+    </div>
+</div>
+    
+<div class="row mb-5 mt-5">
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-header text-center">
+                Recent Transaction
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                Transaction Date
+                            </th>
+                            <th>
+                                Category
+                            </th>
+                            <th>
+                                Amount
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.RecentTransactions)
+                        {
+                            <tr>
+                                <td>
+                                    @item.TransactionDate.ToString("yyyy-MM-dd")
+                                </td>
+                                <td>
+                                    @item.TransactionType
+                                </td>
+                                <td>
+                                    @String.Format("${0:N2}", item.Amount)
+
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="card">
+            <div class="card-header text-center">
+                WealthTrackr Account
+            </div>
+            <div class="card-body text-center">
+                <p class="card-text">
+                    <dl class="row">
+                        <dt class="col-sm-4">
+                            First Name
+                        </dt>
+                        <dd class="col-sm-8">
+                            @ViewBag.AccountFirstName
+                        </dd>
+                        <dt class="col-sm-4">
+                            Last Name
+                        </dt>
+                        <dd class="col-sm-8">
+                            @ViewBag.AccountLastName
+                        </dd>
+                        <dt class="col-sm-4">
+                            Email
+                        </dt>
+                        <dd class="col-sm-8">
+                            @ViewBag.AccountEmail
+                        </dd>
+                        <dt class="col-sm-4">
+                            Account Name
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.AccountName)
+                        </dd>
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.Balance)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @String.Format("{0:C}", Model.Balance)
+                        </dd>
+                    </dl>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+</div>

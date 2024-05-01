@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WealthTrackr.Data;
 
@@ -11,9 +12,11 @@ using WealthTrackr.Data;
 namespace WealthTrackr.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240322060149_Adding tables")]
+    partial class Addingtables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -247,17 +250,9 @@ namespace WealthTrackr.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FkAccountId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("CategoryId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Category");
                 });
 
             modelBuilder.Entity("WealthTrackr.Models.FinancialAccount", b =>
@@ -281,7 +276,7 @@ namespace WealthTrackr.Data.Migrations
 
                     b.HasKey("FinancialAccountId");
 
-                    b.ToTable("FinancialAccounts");
+                    b.ToTable("FinancialAccount");
                 });
 
             modelBuilder.Entity("WealthTrackr.Models.Transaction", b =>
@@ -299,9 +294,11 @@ namespace WealthTrackr.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FkAccountId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("FkAccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FkCategoryId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("TransactionDate")
                         .HasColumnType("datetime2");
@@ -312,7 +309,7 @@ namespace WealthTrackr.Data.Migrations
 
                     b.HasKey("TransactionId");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("Transaction");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

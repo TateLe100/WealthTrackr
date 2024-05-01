@@ -1,0 +1,49 @@
+﻿@model WealthTrackr.Models.Category
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="row mt-5">
+    <div class="col-md-5 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h3>Create Categories</h3>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row mt-2 col-8 mx-auto mb-3">
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <input class="btn-check" type="radio" id="expense" name="Type" value="Expense">
+                            <label class="btn btn-secondary" for="expense">Expense</label>
+                            <input class="btn-check" type="radio" id="income" name="Type" value="Income">
+                            <label class="btn btn-secondary" for="income">Income</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group m-3">
+                        <label class="control-label mb-3">Category Title</label>
+                        <input asp-for="CategoryName" class="form-control" />
+                        <span asp-validation-for="CategoryName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group m-3">
+                        <input type="submit" value="Create" class="btn btn-primary btn-sm" />
+                        <a class="btn btn-sm btn-secondary" asp-area="" asp-controller="Home" asp-action="Dashboard">Back to Dashboard</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
