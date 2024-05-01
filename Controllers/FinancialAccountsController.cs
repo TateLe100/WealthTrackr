@@ -15,6 +15,7 @@ using WealthTrackr.ViewModels;
 
 namespace WealthTrackr.Controllers
 {
+    [Authorize]
     public class FinancialAccountsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -33,7 +34,6 @@ namespace WealthTrackr.Controllers
             
             var currentUser = await _userManager.GetUserAsync(User);
 
-            //var financialAccount = _context.FinancialAccounts.Find(currentUser.Id);
             var financialAccount = await _context.FinancialAccounts.FirstOrDefaultAsync(m => m.FkUserId == currentUser.Id);
             if (financialAccount == null)
             {
@@ -66,15 +66,16 @@ namespace WealthTrackr.Controllers
             var transactions = await _context.Transactions.Where(x => x.FkAccountId == financialAccount.FkUserId).ToListAsync();
 
 
-            // iterate through transaction 
-
             double totalIncome = 0;
             double totalExpense = 0;
 
             foreach (var transaction in transactions)
             {
+                // iterate through transactions 
                 foreach (var category in categories)
                 {
+                    // every transaction check if the categoryName is equal
+                    // if the type and name are equal check that category to see if expense or income
                     if (transaction.TransactionType.Equals(category.CategoryName, StringComparison.OrdinalIgnoreCase))
                     {
                         if (category.Type == "Expense")
@@ -95,11 +96,6 @@ namespace WealthTrackr.Controllers
                                                    .OrderByDescending(t => t.TransactionDate)
                                                    .Take(5)
                                                    .ToListAsync();
-
-
-            
-
-            //collect list of users
             var users = _userManager.Users.ToList();
             //iterate through users
             foreach (var user in users)
@@ -115,11 +111,6 @@ namespace WealthTrackr.Controllers
                     ViewBag.AccountEmail = user.Email;
                 }
             }
-
-
-
-
-            // TODO: Put recent transactions to front end, graph possibly, 2buttons FRONT END STUFF 
 
             return View(financialAccount);
         }
